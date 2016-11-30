@@ -1,5 +1,6 @@
 package GUI;
 
+import Appointment.Appointment;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -13,31 +14,25 @@ import java.util.ArrayList;
 public class StaffGUI extends JFrame {
 
     private JPanel _staffHome = new JPanel();
-    private ArrayList<JLabel> _pendLabels = new ArrayList<>(); //reqLabels = requests/pending
-    private ArrayList<JLabel> _rejLabels = new ArrayList<>(); //rejLabels = rejected requests
-    private ArrayList<JLabel> _accLabels = new ArrayList<>(); //accLabels = accepted requests
-    private ArrayList<Appointment> _pendingList = new ArrayList<>(); //appointments requested/pending
-    private ArrayList<Appointment> _rejectList = new ArrayList<>(); //appointments rejected
-    private ArrayList<Appointment> _acceptList = new ArrayList<>(); //appointments accepted
+    //Arrays of Labels for display
+    private ArrayList<JLabel> _pendingLabels = new ArrayList<>(); //pendingLabels = pending appointments
+    private ArrayList<JLabel> _openLabels = new ArrayList<>(); //openLabels = 
+    private ArrayList<JLabel> _acceptedLabels = new ArrayList<>(); //acceptedLabels = accepted requests
 
-    public StaffGUI(ArrayList<Appointment> appts) {
+    //Arrays of Appointments for data manipulation
+    private ArrayList<Appointment> _pendingList = new ArrayList<>(); //appointments requested/pending
+    private ArrayList<Appointment> _openList = new ArrayList<>(); //appointments rejected
+    private ArrayList<Appointment> _acceptedList = new ArrayList<>(); //appointments accepted
+
+    public StaffGUI(ArrayList<Appointment> open, ArrayList<Appointment> pending, ArrayList<Appointment> accepted) {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         _staffHome.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
         _staffHome.setLayout(null);
-        
-        //Sort 
-        for(int i = 0; i < appts.size();  i++){
-            String status = appts.get(i).getStatus();
-            if(status.equalsIgnoreCase("rejected")){
-                _rejectList.add(appts.get(i));
-            }
-            else if (status.equalsIgnoreCase("accepted")){
-                _acceptList.add(appts.get(i));
-            }
-            else if (status.equalsIgnoreCase("pending")){
-                _pendingList.add(appts.get(i));
-            }
-        }
+
+        //Setting member data
+        _pendingList = pending;
+        _openList = open;
+        _acceptedList = accepted;
 
         //Populate pending list
         //Place JLabel appointments in line with each other, increment coordinates
@@ -47,7 +42,7 @@ public class StaffGUI extends JFrame {
         int h = 75;
         for (int i = 0; i < _pendingList.size(); i++) {
             JLabel temp = new JLabel(_pendingList.get(i).toString());
-            _pendLabels.add(temp);
+            _pendingLabels.add(temp);
             temp.setBounds(x, y, l, h);
             temp.setBorder(BorderFactory.createLineBorder(Color.black));
             y += 125;
@@ -59,53 +54,51 @@ public class StaffGUI extends JFrame {
         //Place JLabel appointments in line with each other, increment coordinates
         x = 300; //change x and y for list position, l and h constant
         y = 50;
-        for (int i = 0; i < _rejectList.size(); i++) {
-            JLabel temp = new JLabel(_rejectList.get(i).toString());
-            _rejLabels.add(temp);
+        for (int i = 0; i < _openList.size(); i++) {
+            JLabel temp = new JLabel(_openList.get(i).toString());
+            _openLabels.add(temp);
             temp.setBounds(x, y, l, h);
             temp.setBorder(BorderFactory.createLineBorder(Color.black));
             y += 125;
             temp.addMouseListener(new MouseClickListener());
             _staffHome.add(temp);
         }
-        
+
         //Populate accepted list
         //Place JLabel appointments in line with each other, increment coordinates
         x = 500; //change x and y for list position, l and h constant
         y = 50;
-        for (int i = 0; i < _acceptList.size(); i++) {
-            JLabel temp = new JLabel(_acceptList.get(i).toString());
-            _accLabels.add(temp);
+        for (int i = 0; i < _acceptedList.size(); i++) {
+            JLabel temp = new JLabel(_acceptedList.get(i).toString());
+            _acceptedLabels.add(temp);
             temp.setBounds(x, y, l, h);
             temp.setBorder(BorderFactory.createLineBorder(Color.black));
             y += 125;
             temp.addMouseListener(new MouseClickListener());
             _staffHome.add(temp);
         }
-        
-        
-        
-        //List Labels
 
+        //List Labels
         //gui maker
         getContentPane().add(_staffHome);
         pack();
     }
 
     private class MouseClickListener implements MouseListener {
+
         private Color _UCRed = new Color(162, 35, 35);
         private Color _UCOrange = new Color(230, 134, 9);
-        
+
         public void mousePressed(MouseEvent e) {
-           
+
         }
 
         public void mouseEntered(MouseEvent e) {
-         
+
         }
 
         public void mouseExited(MouseEvent e) {
-           
+
         }
 
         public void mouseReleased(MouseEvent e) {
@@ -113,24 +106,24 @@ public class StaffGUI extends JFrame {
         }
 
         public void mouseClicked(MouseEvent e) {
-             for(int i = 0; i < _pendLabels.size(); i++){
-                 if(e.getSource().equals(_pendLabels.get(i))){
-                     AppointmentGUI openAppt = new AppointmentGUI(_pendingList.get(i));
-                     openAppt.display();
-                 }
-             }
-             for(int i = 0; i < _rejLabels.size(); i++){
-                 if(e.getSource().equals(_rejLabels.get(i))){
-                     AppointmentGUI openAppt = new AppointmentGUI(_rejectList.get(i));
-                     openAppt.display();
-                 }
-             }
-             for(int i = 0; i < _accLabels.size(); i++){
-                 if(e.getSource().equals(_accLabels.get(i))){
-                     AppointmentGUI openAppt = new AppointmentGUI(_acceptList.get(i));
-                     openAppt.display();
-                 }
-             }
+            for (int i = 0; i < _pendingLabels.size(); i++) {
+                if (e.getSource().equals(_pendingLabels.get(i))) {
+                    AppointmentGUI openAppt = new AppointmentGUI(_pendingList.get(i));
+                    openAppt.display();
+                }
+            }
+            for (int i = 0; i < _openLabels.size(); i++) {
+                if (e.getSource().equals(_openLabels.get(i))) {
+                    AppointmentGUI openAppt = new AppointmentGUI(_openList.get(i));
+                    openAppt.display();
+                }
+            }
+            for (int i = 0; i < _acceptedLabels.size(); i++) {
+                if (e.getSource().equals(_acceptedLabels.get(i))) {
+                    AppointmentGUI openAppt = new AppointmentGUI(_acceptedList.get(i));
+                    openAppt.display();
+                }
+            }
         }
 
     }
