@@ -1,4 +1,3 @@
-status (pending, accepted, rejected)
 name (blank or "open" for open appointments)
 date of appointment
 time of appointment
