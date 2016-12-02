@@ -96,17 +96,18 @@ public class AppointmentGUI extends JFrame {
 
         //button boundaries
         editButton.setBounds(100, 250, 100, 30);
+        editButton.addActionListener(new ButtonListener());
+        _appt.add(editButton);
+        
+        if(appt.getStatus().equalsIgnoreCase("Pending")){
         rejectButton.setBounds(250, 250, 100, 30);
         acceptButton.setBounds(175, 250, 100, 30);
-
-        editButton.addActionListener(new ButtonListener());
         rejectButton.addActionListener(new ButtonListener());
         acceptButton.addActionListener(new ButtonListener());
-
-        _appt.add(editButton);
         _appt.add(rejectButton);
         _appt.add(acceptButton);
-
+        }
+        
         //editing text field boundaries, should overlay labels being edited
         //also set visibility to false and set text to equal labels
         editFellow.setBounds(_fellow.getBounds());
