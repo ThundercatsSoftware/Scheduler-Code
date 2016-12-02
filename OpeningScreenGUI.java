@@ -32,7 +32,8 @@ public class OpeningScreenGUI extends JFrame {
 
         //set basic details
         _OpSc.setPreferredSize(new Dimension(500, 500));
-        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        //setLocationRelativeTo(null);
         _OpSc.setLayout(null);
 
         //set member data
@@ -63,12 +64,13 @@ public class OpeningScreenGUI extends JFrame {
     private class ButtonListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
+            /*
             if (e.getSource().equals(_studentButton)) { //Open Student GUI
                 StudentGUI studgui = new StudentGUI(_open); //Students only need to see what they can request
                 studgui.display();
                 setVisible(false); //close this window
                 dispose();
-            } else if (e.getSource().equals(_staffButton)) { //Open Staff GUI
+            } else */ if (e.getSource().equals(_staffButton)) { //Open Staff GUI
                 StaffGUI staffgui = new StaffGUI(_open, _pending, _accepted); //staff will see all appointments
                 staffgui.display();
                 setVisible(false); //close this window
