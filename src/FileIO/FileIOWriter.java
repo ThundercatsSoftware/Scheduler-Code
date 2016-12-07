@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Bearly Free Scheduler Software
  */
 package FileIO;
 
@@ -13,7 +11,9 @@ import Schedule.Appointment;
 import java.io.IOException;
 
 /**
- *
+ * FileIOWriter is used to write appointments that have been entered into the
+ * scheduler into data files so appointments can be saved over multiple uses
+ * of the application.
  * @author Henry
  */
 public class FileIOWriter {
@@ -29,13 +29,12 @@ public class FileIOWriter {
     }
     
     public void writeAppts(){
-	int i = 0;
+	int l = ApptList.size();
 	
-	while(!ApptList.isEmpty()){
+	for(int i=0;i<=l;i++){
 	    Appointment holder;
 	    
 	    holder = ApptList.get(i);
-	    i++;
 	    
 	    try{
 		out.write(holder.toFile());
