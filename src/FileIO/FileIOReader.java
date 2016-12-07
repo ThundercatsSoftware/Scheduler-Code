@@ -1,3 +1,7 @@
+/*
+ * Bearly Free Scheduling Software
+ */
+
 package FileIO;
 
 import java.io.BufferedReader;
@@ -12,7 +16,8 @@ import java.io.File;
 import Schedule.Appointment;
 
 /**
- *
+ * FileIOReader is a singleton that reads in appointments from data files that are saved
+ * with the scheduler software
  * @author maroselli
  * @editor nichambers made singleton, added reading in of status
  */
