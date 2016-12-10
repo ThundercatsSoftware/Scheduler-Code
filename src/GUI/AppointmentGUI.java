@@ -1,6 +1,8 @@
 package GUI;
 
-import Schedule.Appointment;
+import FileReading.FileWriterIO;
+import Appointment.Appointment;
+import FileReading.FileReadAndSort;
 import java.awt.*;
 import java.awt.EventQueue;
 import javax.swing.*;
@@ -8,6 +10,7 @@ import java.io.*;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 
 /**
  *
@@ -17,7 +20,7 @@ public class AppointmentGUI extends JFrame {
 
     //initialize  Jpanel
     private JPanel _appt = new JPanel();
-    
+
     //member data Appointment object passed in
     Appointment appointment;
 
@@ -40,14 +43,22 @@ public class AppointmentGUI extends JFrame {
     private JLabel statusLab = new JLabel("Status:");
 
     //buttons, edit and close, edit text changes to "save" after being clicked.
+    //Schedule button will make an appointment for the user, moves to pending
     private JButton editButton = new JButton("Edit");
     private JButton rejectButton = new JButton("Reject");
     private JButton acceptButton = new JButton("Accept");
+    private JButton scheduleButton = new JButton("Schedule Appointment");
 
     //Editing Text Fields, become visible when editing, invisible when saved
     private JTextField editLength = new JTextField();
     private JTextField editFellow = new JTextField();
     private JTextField editDate = new JTextField();
+
+    //Save ArrayLists from sendLists method for later creation of new gui
+    ArrayList<Appointment> _openList = new ArrayList<>();
+    ArrayList<Appointment> _pendingList = new ArrayList<>();
+    ArrayList<Appointment> _acceptedList = new ArrayList<>();
+    String _gui = "";
 
     public AppointmentGUI(Appointment appt) {
         //set basic details
@@ -59,7 +70,7 @@ public class AppointmentGUI extends JFrame {
 
         //set Appointment member data
         appointment = appt;
-        
+
         //set static label boundaries
         nameLab.setBounds(10, 45, 50, 50);
         dateLab.setBounds(120, 25, 50, 50);
@@ -94,18 +105,29 @@ public class AppointmentGUI extends JFrame {
         _appt.add(_length);
         _appt.add(_fellow);
 
-        //button boundaries
-        editButton.setBounds(100, 250, 100, 30);
-        rejectButton.setBounds(250, 250, 100, 30);
-        acceptButton.setBounds(175, 250, 100, 30);
+        //button boundaries vary depending on which kind of appointment is viewed
+        if (appt.getStatus().equalsIgnoreCase("Pending")) {
+            rejectButton.setBounds(260, 250, 100, 30);
+            acceptButton.setBounds(150, 250, 100, 30);
+            editButton.setBounds(40, 250, 100, 30);
 
-        editButton.addActionListener(new ButtonListener());
-        rejectButton.addActionListener(new ButtonListener());
-        acceptButton.addActionListener(new ButtonListener());
+            rejectButton.addActionListener(new ButtonListener());
+            acceptButton.addActionListener(new ButtonListener());
+            editButton.addActionListener(new ButtonListener());
 
-        _appt.add(editButton);
-        _appt.add(rejectButton);
-        _appt.add(acceptButton);
+            _appt.add(rejectButton);
+            _appt.add(acceptButton);
+            _appt.add(editButton);
+
+        } else if (appt.getStatus().equalsIgnoreCase("Accepted")) {
+            editButton.setBounds(100, 250, 100, 30);
+            editButton.addActionListener(new ButtonListener());
+            _appt.add(editButton);
+        } else if (appt.getStatus().equalsIgnoreCase("Open") && !OpeningScreenGUI.USER_NAME.equals("")){
+            scheduleButton.setBounds(50, 250, 300, 30);
+            scheduleButton.addActionListener(new ButtonListener());
+            _appt.add(scheduleButton);
+        }
 
         //editing text field boundaries, should overlay labels being edited
         //also set visibility to false and set text to equal labels
@@ -129,6 +151,20 @@ public class AppointmentGUI extends JFrame {
         //setLocationRelativeTo(null);
         getContentPane().add(_appt);
         pack();
+    }
+
+    //Sends in lists from another class to set up a new GUI with updated Info Later
+    public void sendLists(ArrayList<Appointment> open, ArrayList<Appointment> pending, ArrayList<Appointment> accepted) {
+        _openList = open;
+        _pendingList = pending;
+        _acceptedList = accepted;
+        _gui = "staff";
+    }
+
+    public void sendLists(ArrayList<Appointment> open, ArrayList<Appointment> pending) {
+        _openList = open;
+        _pendingList = pending;
+        _gui = "student";
     }
 
     private class ButtonListener implements ActionListener {
@@ -157,7 +193,7 @@ public class AppointmentGUI extends JFrame {
                     _fellow.setVisible(true);
                     _date.setVisible(true);
                     _length.setVisible(true);
-                    
+
                     editFellow.setVisible(false);
                     editDate.setVisible(false);
                     editLength.setVisible(false);
@@ -166,18 +202,153 @@ public class AppointmentGUI extends JFrame {
                     appointment.setFellow(_fellow.getText());
                     appointment.setDate(_date.getText());
                     appointment.setLength(_length.getText());
-                    
-                    //close window upon saving
-                    _appt.setVisible(false);
+
+                    //close window, rewrite files, rewrite lists upon saving
+                    try {
+                        FileReadAndSort frs = FileReadAndSort.getInstance();
+                        _pendingList = frs.sort(_pendingList);
+                        _acceptedList = frs.sort(_acceptedList);
+
+                        FileWriterIO fw = new FileWriterIO();
+                        fw.writeAppts(_pendingList);
+                        fw.writeAppts(_acceptedList);
+                        System.out.println("WRITTEN");
+                    } catch (Exception except) {
+                        System.out.println(except);
+                    }
+                    StaffGUI staffgui = new StaffGUI(_openList, _pendingList, _acceptedList);
+                    staffgui.display();
+                    setVisible(false);
                     dispose();
+
                 }
-            } else if (e.getSource().equals(rejectButton)) {
-                appointment.setStatus("Rejected");
-                
-            } else if (e.getSource().equals(acceptButton)){
-                appointment.setStatus("Accepted");
-            }
+            } 
             
+            else if (e.getSource().equals(rejectButton)) {
+                appointment.setStatus("Rejected");
+                for (int i = 0; i < _pendingList.size(); i++) {
+                    if (_pendingList.get(i).toString().equals(appointment.toString())) {
+                        _pendingList.remove(i);
+                    }
+                }
+
+                try {
+                    FileReadAndSort frs = FileReadAndSort.getInstance();
+                    _pendingList = frs.sort(_pendingList);
+                    _acceptedList = frs.sort(_acceptedList);
+
+                    FileWriterIO fw = new FileWriterIO();
+
+                    if (_pendingList.size() > 0) {
+                        fw.writeAppts(_pendingList);
+                    } else {
+                        File f = new File("PendingAppts.txt");
+                        fw.clearFile(f);
+                    }
+                    if (_acceptedList.size() > 0) {
+                        fw.writeAppts(_acceptedList);
+                    } else {
+                        File f = new File("AcceptedAppts.txt");
+                        fw.clearFile(f);
+                    }
+
+                    System.out.println("WRITTEN");
+
+                } catch (Exception except) {
+                    System.out.println(except);
+                }
+                StaffGUI staffgui = new StaffGUI(_openList, _pendingList, _acceptedList);
+                staffgui.display();
+                setVisible(false);
+                dispose();
+
+            } 
+            
+            else if (e.getSource().equals(acceptButton)) {
+                appointment.setStatus("Accepted");
+                for (int i = 0; i < _pendingList.size(); i++) {
+                    if (_pendingList.get(i).toString().equals(appointment.toString())) {
+                        _acceptedList.add(_pendingList.get(i));
+                        _pendingList.remove(i);
+                    }
+                }
+
+                try {
+                    FileWriterIO fw = new FileWriterIO();
+                    FileReadAndSort frs = FileReadAndSort.getInstance();
+                    _pendingList = frs.sort(_pendingList);
+                    _acceptedList = frs.sort(_acceptedList);
+
+                    if (_pendingList.size() > 0) {
+                        fw.writeAppts(_pendingList);
+                    } else {
+                        File f = new File("PendingAppts.txt");
+                        fw.clearFile(f);
+                    }
+                    if (_acceptedList.size() > 0) {
+                        fw.writeAppts(_acceptedList);
+                    } else {
+                        File f = new File("AcceptedAppts.txt");
+                        fw.clearFile(f);
+                    }
+                    System.out.println("WRITTEN");
+
+                } catch (Exception except) {
+                    System.out.println(except);
+                }
+                StaffGUI staffgui = new StaffGUI(_openList, _pendingList, _acceptedList);
+                staffgui.display();
+                setVisible(false);
+                dispose();
+            } 
+            
+            else if (e.getSource().equals(scheduleButton)){
+                if(scheduleButton.getText().equals("Schedule Appointment")){
+                    scheduleButton.setText("Submit");
+                    _name.setText(OpeningScreenGUI.USER_NAME);
+                }else if(scheduleButton.getText().equals("Submit")){
+                    scheduleButton.setText("Schedule Appointment");
+                    appointment.setName(_name.getText());
+                 
+                     
+                for (int i = 0; i < _openList.size(); i++) {
+                    if (_openList.get(i).toString().equals(appointment.toString())) {
+                        appointment.setStatus("Pending");
+                        _pendingList.add(_openList.get(i));
+                        _openList.remove(i);
+                    }
+                }
+
+                try {
+                    FileWriterIO fw = new FileWriterIO();
+                    FileReadAndSort frs = FileReadAndSort.getInstance();
+                    _pendingList = frs.sort(_pendingList);
+
+                    if (_pendingList.size() > 0) {
+                        fw.writeAppts(_pendingList);
+                    } else {
+                        File f = new File("PendingAppts.txt");
+                        fw.clearFile(f);
+                    }
+                    if (_openList.size() > 0) {
+                        fw.writeAppts(_openList);
+                    } else {
+                        File f = new File("OpenAppts.txt");
+                        fw.clearFile(f);
+                    }
+                    System.out.println("WRITTEN");
+
+                } catch (Exception except) {
+                    System.out.println(except);
+                }
+                StudentGUI studgui = new StudentGUI(_openList, _pendingList);
+                studgui.showConfirmation(appointment);
+                studgui.display();
+                setVisible(false);
+                dispose();
+                }
+            }
+
         }
     }
 
