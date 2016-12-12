@@ -13,9 +13,9 @@ ButtonListener(Class) waits for button presses to close the appointment, save th
 
 package GUI;
 
-import FileReading.FileWriterIO;
-import Appointment.Appointment;
-import FileReading.FileReadAndSort;
+import FileIO.FileWriterIO;
+import Schedule.Appointment;
+import FileIO.FileIOReader;
 import java.awt.*;
 import java.awt.EventQueue;
 import javax.swing.*;
@@ -220,7 +220,9 @@ public class AppointmentGUI extends JFrame {
 
                     //close window, rewrite files, rewrite lists upon saving
                     try {
-                        FileReadAndSort frs = FileReadAndSort.getInstance();
+
+                        FileIOReader frs = FileIOReader.getInstance();
+
                         _pendingList = frs.sort(_pendingList);
                         _acceptedList = frs.sort(_acceptedList);
 
@@ -247,7 +249,9 @@ public class AppointmentGUI extends JFrame {
                 }
 
                 try {
-                    FileReadAndSort frs = FileReadAndSort.getInstance();
+
+                    FileIOReader frs = FileIOReader.getInstance();
+
                     _pendingList = frs.sort(_pendingList);
                     _acceptedList = frs.sort(_acceptedList);
 
@@ -288,7 +292,9 @@ public class AppointmentGUI extends JFrame {
 
                 try {
                     FileWriterIO fw = new FileWriterIO();
-                    FileReadAndSort frs = FileReadAndSort.getInstance();
+
+                    FileIOReader frs = FileIOReader.getInstance();
+
                     _pendingList = frs.sort(_pendingList);
                     _acceptedList = frs.sort(_acceptedList);
 
@@ -334,7 +340,7 @@ public class AppointmentGUI extends JFrame {
 
                 try {
                     FileWriterIO fw = new FileWriterIO();
-                    FileReadAndSort frs = FileReadAndSort.getInstance();
+                    FileIOReader frs = FileIOReader.getInstance();
                     _pendingList = frs.sort(_pendingList);
 
                     if (_pendingList.size() > 0) {

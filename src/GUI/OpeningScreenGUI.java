@@ -12,8 +12,8 @@ Display makes the GUI visible.
 
 package GUI;
 
-import Appointment.Appointment;
-import Main.Scheduler;
+import Schedule.Appointment;
+import Schedule.Scheduler;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.ActionListener;

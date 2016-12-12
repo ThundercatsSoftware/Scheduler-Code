@@ -16,8 +16,8 @@ or open whichever Appointment was clicked on
 package GUI;
 
 import java.util.ArrayList;
-import Appointment.Appointment;
-import FileReading.FileReadAndSort;
+import Schedule.Appointment;
+import FileIO.FileIOReader;
 import java.awt.*;
 import java.awt.Color;
 import java.awt.EventQueue;

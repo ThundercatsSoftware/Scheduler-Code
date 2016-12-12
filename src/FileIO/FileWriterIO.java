@@ -1,13 +1,13 @@
 /*
  * Bearly Free Scheduler Software
  */
-package FileReading;
+package FileIO
 
 import java.util.ArrayList;
 import java.io.File;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import Appointment.Appointment;
+import Schedule.Appointment;
 import java.io.IOException;
 
 /**

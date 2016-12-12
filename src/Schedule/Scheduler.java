@@ -1,7 +1,7 @@
-package Main;
+package Schedule;
 
-import FileReading.FileReadAndSort;
-import Appointment.Appointment;
+import FileIO.FileIOReader;
+import Schedule.Appointment;
 import GUI.OpeningScreenGUI;
 import GUI.StudentGUI;
 import GUI.StaffGUI;
@@ -22,7 +22,7 @@ public class Scheduler {
         ArrayList<Appointment> _pending = new ArrayList<>();
         ArrayList<Appointment> _accepted = new ArrayList<>();
 
-        FileReadAndSort fr = FileReadAndSort.getInstance();
+        FileIOReader fr = FileIOReader.getInstance();
 
         File openAppts = new File("OpenAppts.txt");
         File pendingAppts = new File("PendingAppts.txt");

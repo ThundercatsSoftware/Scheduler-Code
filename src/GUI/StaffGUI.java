@@ -16,9 +16,9 @@ or open whichever Appointment was clicked on
 
 package GUI;
 
-import FileReading.FileWriterIO;
-import Appointment.Appointment;
-import FileReading.FileReadAndSort;
+import FileIO.FileWriterIO;
+import Schedule.Appointment;
+import FileIO.FileIOReader;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
