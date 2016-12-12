@@ -1,3 +1,16 @@
+/*
+AppointmentGUI opens a small window with the details of an appointment. This can be edited, accepted
+or rejeced depending on what type of appointment it is.
+Students and only students may schedule appointments using this UI.
+Staff and only staff may reject, accept, and edit appointments.
+Methods:
+AppointmentGUI creates the small window UI for users.
+SendLists(1) sends lists to make a StaffGUI object once the appointment is done with.
+SendLists(2) sends lists to make a StudentGUI object once the appointment is done with.
+ButtonListener(Class) waits for button presses to close the appointment, save the data,
+    rewrite the files, and create a new Student or Staff GUI.
+*/
+
 package GUI;
 
 import FileReading.FileWriterIO;
@@ -36,6 +49,7 @@ public class AppointmentGUI extends JFrame {
     //static JLabels, labels of what information is what
     private JLabel nameLab = new JLabel("Name:");
     private JLabel dateLab = new JLabel("Date:");
+    private JLabel dateDirectionLab = new JLabel("MM/DD/YYYY");
     private JLabel timeLab = new JLabel("Time:");
     private JLabel lengthLab = new JLabel("Length:");
     private JLabel fellowLab = new JLabel("Fellow:");
@@ -58,7 +72,6 @@ public class AppointmentGUI extends JFrame {
     ArrayList<Appointment> _openList = new ArrayList<>();
     ArrayList<Appointment> _pendingList = new ArrayList<>();
     ArrayList<Appointment> _acceptedList = new ArrayList<>();
-    String _gui = "";
 
     public AppointmentGUI(Appointment appt) {
         //set basic details
@@ -73,22 +86,24 @@ public class AppointmentGUI extends JFrame {
 
         //set static label boundaries
         nameLab.setBounds(10, 45, 50, 50);
-        dateLab.setBounds(120, 25, 50, 50);
-        timeLab.setBounds(120, 100, 50, 50);
-        lengthLab.setBounds(120, 175, 50, 50);
+        dateLab.setBounds(170, 25, 50, 50);
+        dateDirectionLab.setBounds(230, 55, 70, 50);
+        timeLab.setBounds(195, 100, 50, 50);
+        lengthLab.setBounds(170, 175, 50, 50);
         fellowLab.setBounds(10, 125, 50, 50);
 
         _appt.add(nameLab);
         _appt.add(dateLab);
+        _appt.add(dateDirectionLab);
         _appt.add(timeLab);
         _appt.add(lengthLab);
         _appt.add(fellowLab);
 
         //set dynamic Label boundaries and text
         _name.setBounds(60, 45, 200, 50);
-        _date.setBounds(170, 25, 200, 50);
-        _time.setBounds(170, 100, 100, 50);
-        _length.setBounds(170, 175, 100, 50);
+        _date.setBounds(230, 25, 100, 50);
+        _time.setBounds(255, 100, 100, 50);
+        _length.setBounds(230, 175, 100, 50);
         _fellow.setBounds(60, 125, 100, 50);
 
         _name.setText(appt.getName());
@@ -141,6 +156,7 @@ public class AppointmentGUI extends JFrame {
 
         editFellow.setVisible(false);
         editDate.setVisible(false);
+        dateDirectionLab.setVisible(false);
         editLength.setVisible(false);
 
         _appt.add(editFellow);
@@ -158,13 +174,11 @@ public class AppointmentGUI extends JFrame {
         _openList = open;
         _pendingList = pending;
         _acceptedList = accepted;
-        _gui = "staff";
     }
 
     public void sendLists(ArrayList<Appointment> open, ArrayList<Appointment> pending) {
         _openList = open;
         _pendingList = pending;
-        _gui = "student";
     }
 
     private class ButtonListener implements ActionListener {
@@ -180,6 +194,7 @@ public class AppointmentGUI extends JFrame {
                     _length.setVisible(false);
                     editFellow.setVisible(true);
                     editDate.setVisible(true);
+                    dateDirectionLab.setVisible(true);
                     editLength.setVisible(true);
                 } else {
                     editButton.setText("Edit"); //change button text, update labels and document
@@ -212,7 +227,6 @@ public class AppointmentGUI extends JFrame {
                         FileWriterIO fw = new FileWriterIO();
                         fw.writeAppts(_pendingList);
                         fw.writeAppts(_acceptedList);
-                        System.out.println("WRITTEN");
                     } catch (Exception except) {
                         System.out.println(except);
                     }
@@ -252,8 +266,6 @@ public class AppointmentGUI extends JFrame {
                         fw.clearFile(f);
                     }
 
-                    System.out.println("WRITTEN");
-
                 } catch (Exception except) {
                     System.out.println(except);
                 }
@@ -264,6 +276,7 @@ public class AppointmentGUI extends JFrame {
 
             } 
             
+            //accept button actions
             else if (e.getSource().equals(acceptButton)) {
                 appointment.setStatus("Accepted");
                 for (int i = 0; i < _pendingList.size(); i++) {
@@ -291,7 +304,6 @@ public class AppointmentGUI extends JFrame {
                         File f = new File("AcceptedAppts.txt");
                         fw.clearFile(f);
                     }
-                    System.out.println("WRITTEN");
 
                 } catch (Exception except) {
                     System.out.println(except);
@@ -302,6 +314,7 @@ public class AppointmentGUI extends JFrame {
                 dispose();
             } 
             
+            //Schedule Button actions
             else if (e.getSource().equals(scheduleButton)){
                 if(scheduleButton.getText().equals("Schedule Appointment")){
                     scheduleButton.setText("Submit");
@@ -336,7 +349,6 @@ public class AppointmentGUI extends JFrame {
                         File f = new File("OpenAppts.txt");
                         fw.clearFile(f);
                     }
-                    System.out.println("WRITTEN");
 
                 } catch (Exception except) {
                     System.out.println(except);

@@ -1,3 +1,15 @@
+/*
+OpeningScreenGUI is a main menu for the Scheduler system
+To continue past this screen, the use rmust select that they are either a student or staff member.
+To continue as a student, they MUST enter a name in the text box. Staff are not required to do this.
+This is required by students for the purpose of scheduling appointments with an auto-fill name box.
+Methods:
+OpeningScreenGUI creates a UI for all users to choose staff or student.
+ButtonListener(Class) waits for buttons to be pressed. It then deciphers which button was
+    pressed and will open up the appropriate GUI for the user.
+Display makes the GUI visible.
+*/
+
 package GUI;
 
 import Appointment.Appointment;
