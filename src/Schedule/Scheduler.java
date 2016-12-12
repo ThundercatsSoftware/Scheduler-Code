@@ -1,18 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Schedule;
+
 import FileIO.FileIOReader;
+import Schedule.Appointment;
 import GUI.OpeningScreenGUI;
+import GUI.StudentGUI;
+import GUI.StaffGUI;
 import java.util.ArrayList;
 import java.io.File;
+
 /**
  *
  * @author nichambers
  */
 public class Scheduler {
+
     /**
      * @param args the command line arguments
      */
@@ -20,27 +21,26 @@ public class Scheduler {
         ArrayList<Appointment> _open = new ArrayList<>();
         ArrayList<Appointment> _pending = new ArrayList<>();
         ArrayList<Appointment> _accepted = new ArrayList<>();
-        
+
         FileIOReader fr = FileIOReader.getInstance();
-        
+
         File openAppts = new File("OpenAppts.txt");
         File pendingAppts = new File("PendingAppts.txt");
         File acceptedAppts = new File("AcceptedAppts.txt");
-        try{
-        _open = fr.readInFile(openAppts);
-        _pending = fr.readInFile(pendingAppts);
-        _accepted = fr.readInFile(acceptedAppts);
-        
+        try {
+            _open = fr.readInFile(openAppts);
+            _pending = fr.readInFile(pendingAppts);
+            _accepted = fr.readInFile(acceptedAppts);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
         _open = fr.sort(_open);
         _pending = fr.sort(_pending);
         _accepted = fr.sort(_accepted);
-        
-        }catch(Exception e){
-            System.out.println(e);
-        }
-        
+
         OpeningScreenGUI opGUI = new OpeningScreenGUI(_open, _pending, _accepted);
         opGUI.display();
     }
-    
 }
