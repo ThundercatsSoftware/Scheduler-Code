@@ -1,4 +1,4 @@
-package Schedule;
+package Appointment;
 
 import java.io.File;
 

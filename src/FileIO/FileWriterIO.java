@@ -1,7 +1,7 @@
 /*
  * Bearly Free Scheduler Software
  */
-package FileIO;
+package FileIO
 
 import java.util.ArrayList;
 import java.io.File;

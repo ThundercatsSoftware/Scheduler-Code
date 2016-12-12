@@ -220,7 +220,9 @@ public class AppointmentGUI extends JFrame {
 
                     //close window, rewrite files, rewrite lists upon saving
                     try {
+
                         FileIOReader frs = FileIOReader.getInstance();
+
                         _pendingList = frs.sort(_pendingList);
                         _acceptedList = frs.sort(_acceptedList);
 
@@ -247,7 +249,9 @@ public class AppointmentGUI extends JFrame {
                 }
 
                 try {
+
                     FileIOReader frs = FileIOReader.getInstance();
+
                     _pendingList = frs.sort(_pendingList);
                     _acceptedList = frs.sort(_acceptedList);
 
@@ -288,7 +292,9 @@ public class AppointmentGUI extends JFrame {
 
                 try {
                     FileWriterIO fw = new FileWriterIO();
+
                     FileIOReader frs = FileIOReader.getInstance();
+
                     _pendingList = frs.sort(_pendingList);
                     _acceptedList = frs.sort(_acceptedList);
 
