@@ -1,7 +1,3 @@
-/*
- * Bearly Free Scheduling Software
- */
-
 package FileIO;
 
 import java.io.BufferedReader;
@@ -14,10 +10,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.io.File;
 import Schedule.Appointment;
+import java.util.Calendar;
 
 /**
- * FileIOReader is a singleton that reads in appointments from data files that are saved
- * with the scheduler software
+ *
  * @author maroselli
  * @editor nichambers made singleton, added reading in of status
  */
@@ -91,24 +87,61 @@ public class FileIOReader {
         return apptlist;
     }
 
-    //Sorts array of Appointments by date using bubble sort
+    //Sorts array of Appointments by date
     public ArrayList<Appointment> sort(ArrayList<Appointment> array) {
-        if (array.size() > 1) {
-            for (int i = array.size() - 1; i >= 0; i--) {
-                for (int j = 1; j < i; j++) {
-                    if (array.get(j - 1).compareDate(array.get(j)).equals("a")) {
-                        Appointment a = array.get(j - 1);
-                        Appointment b = array.get(j);
-                        array.remove(j - 1);
-                        array.add(j - 1, b);
-                        array.remove(j);
-                        array.add(j, a);
-                    }
-                }
-
+        //Quickly sift out rejected appointments
+        for (int i = 0; i < array.size(); i++) {
+            if (array.get(i).getStatus().equalsIgnoreCase("Rejected")) {
+                array.remove(i);
             }
         }
 
-        return array;
+        if (array.size() > 1) {
+
+            //Sift out any appointments that have already passed current date/time
+            //removes appointments every hour
+            String currentTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+            int year = Integer.parseInt(currentTime.substring(0, 4)); //current year 
+            int month = Integer.parseInt(currentTime.substring(4, 6)); //current month
+            int day = Integer.parseInt(currentTime.substring(6, 8)); //current day
+            int hour = Integer.parseInt(currentTime.substring(9, 11)); //current hour
+            for (int i = array.size() - 1; i >= 0; i--) {
+                Appointment a = array.get(i);
+                if (a.getYear() < year) {
+                    array.remove(i);
+                } else if (a.getMonth() < month) {
+                    array.remove(i);
+                } else if (a.getDay() < day) {
+                    array.remove(i);
+                } else if (a.getDay() == day && a.getHour() < hour) {
+                    array.remove(i);
+                }
+            }
+
+            //Organize by date
+            ArrayList<Appointment> sorted = new ArrayList<>();
+            int siz = array.size();
+            for (int t = 0; t < siz; t++) {
+
+                Appointment minDate = array.get(array.size() - 1);
+                int mindex = array.size() - 1;
+
+                for (int i = array.size() - 1; i > 0; i--) {
+                    Appointment compare = array.get(i - 1);
+                    String s = minDate.compareDate(compare);
+                    if (s != null && s.equals("first bigger")) {
+                        minDate = compare;
+                        mindex = i - 1;
+                    }
+                }
+                sorted.add(array.remove(mindex));
+            }
+            if (array.size() != 0) {
+                sorted.add(array.remove(0));
+            }
+            return sorted;
+        } else {
+            return array;
+        }
     }
 }
